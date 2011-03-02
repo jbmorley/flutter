@@ -20,10 +20,11 @@
 	
 	<body onload="refresh();">
 
-		
-		<div id="write">
-			<div id="remaining">140</div>
-			<textarea id="new_tweet"></textarea>
+		<div id="write_super">
+			<div id="write">
+				<div id="remaining">140</div>
+				<textarea id="new_tweet"></textarea>
+			</div>
 		</div>
 		<ul id="feed"></ul>
 		
