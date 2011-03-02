@@ -18,7 +18,7 @@
 		
 	</head>
 	
-	<body onload="refresh();">
+	<body id="all" onload="refresh();">
 
 		<div id="write_super">
 			<div id="write">
