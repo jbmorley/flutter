@@ -69,8 +69,9 @@ function setup_events() {
 function fetch(url, page) {
 	
 	updating = true;
+	var fetch = url + '?user=' + user + '&pass=' + pass + '&page=' + page;
 	
-	new Ajax.Request(url + '?page=' + page,
+	new Ajax.Request(fetch,
 	  {
 		method:'get',
 		onSuccess: function(transport) {
@@ -101,7 +102,9 @@ function interpret(json) {
 
 function update(message) {
 	
-	new Ajax.Request('/flit/statuses/update.php', {
+	var update = '/flit/statuses/update.php' + '?user=' + user + '&pass=' + pass;
+	
+	new Ajax.Request(update, {
 		method: 'post',
 		parameters: { status: message },
 		onSuccess: function(transport) {
