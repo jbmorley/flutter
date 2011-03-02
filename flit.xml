@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="Flit" />
+<Content type="html"><![CDATA[
+
+		<script type="text/javascript" src="lib/prototype.js"></script>
+		<script type="text/javascript" src="src/scriptaculous.js"></script>
+		<script type="text/javascript">
+			
+			function refresh() {
+				setup_events();
+				// fetch('http://twitter.com/statuses/public_timeline.json');
+				fetch('http://twitter.com/statuses/friends_timeline.json');
+				// fetch('http://twitter.com/direct_messages.json');
+			}
+			
+			function setup_events() {
+			
+				$('new_tweet').observe('keyup', function(event) {
+					var left = 140 - ($('new_tweet').value.length+1);
+					if (event.keyCode == Event.KEY_RETURN) {
+						if (left >= -1) {
+							$('new_tweet').addClassName('updating');
+							update($('new_tweet').value);
+						}
+					} else {
+						$('remaining').update(left);
+						if (left < 0) {
+							$('remaining').addClassName('error');
+							$('remaining').removeClassName('warning');
+						} else if (left < 11) {
+							$('remaining').addClassName('warning');
+							$('remaining').removeClassName('error');
+						} else {
+							$('remaining').removeClassName('warning');
+							$('remaining').removeClassName('error');
+						}
+					}
+				});
+				
+			}
+		
+			function fetch(url) {
+				
+				new Ajax.Request(url,
+				  {
+					method:'get',
+					onSuccess: function(transport) {
+					  var result = interpret(transport.responseText);
+					  for (var i=result.length-1; i>=0; i--) {
+					  	add(result[i]);
+					  }
+					},
+					onFailure: function() {
+						alert('Unable to query Twitter.  Please try again later.')
+					}
+				  });
+			}
+			
+			function interpret(json) {
+				var text = "var ret = " + json;
+				eval(text);
+				return ret;
+			}
+			
+			function update(message) {
+			
+				new Ajax.Request('http://twitter.com/statuses/update.json', {
+					method: 'post',
+					parameters: { status: message },
+					onSuccess: function(transport) {
+						add(interpret(transport.responseText));
+						// TODO Refactor this into a slightly more elegant location
+						$('new_tweet').value = '';
+						$('new_tweet').removeClassName('updating');
+						$('remaining').update('140');
+						$('remaining').removeClassName('error');
+						$('remaining').removeClassName('warning');
+					}
+				});
+			}
+			
+			function add(tweet) {
+				
+				var image = Builder.node('img');
+				image.src = tweet.user.profile_image_url;
+				image.addClassName('profile');
+				var user = Builder.node('a');
+				user.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
+				user.target = '_blank';
+				user.insert(image);
+				
+				var cell_image = Builder.node('td');
+				cell_image.width = "48px";
+				cell_image.insert(user);
+				
+				var cell_text  = Builder.node('td');
+				
+				var name = Builder.node('p');
+				
+				var star = Builder.node('img');
+				if (tweet.favorited) {
+					star.src = 'images/star-on.png';
+				} else {
+					star.src = 'images/star-off.png';				
+				}
+				star.addClassName('star');
+				
+				name.insert(star);
+				name.insert(tweet.user.name);
+				name.addClassName('name');
+				cell_text.insert(name);
+				
+				cell_text.insert(Builder.node('p', tweet.text));
+				
+				var at = Builder.node('p', tweet.created_at);
+				at.addClassName('at');
+				cell_text.insert(at);
+				
+				cell_text.onclick =
+					function() {
+						var new_tweet = $('new_tweet');
+
+						var reply  = "@" + tweet.user.screen_name + " ";
+						var direct = "d " + tweet.user.screen_name + " ";
+						
+						if (new_tweet.value != reply) {
+							new_tweet.value = reply;
+							new_tweet.activate();
+							doSetCaretPosition(new_tweet, reply.length);
+						} else if (new_tweet.value == reply) {
+							new_tweet.value = direct;
+							new_tweet.activate();
+							doSetCaretPosition(new_tweet, direct.length);
+						}
+
+					}
+				
+				var row_layout = Builder.node('tr');
+				row_layout.insert(cell_image);
+				row_layout.insert(cell_text);
+				
+				var table_layout = Builder.node('table');
+				table_layout.insert(row_layout);
+			
+				var li = Builder.node('li');
+				li.style.display = 'none';
+				li.insert(table_layout);
+				
+				// Reply
+				if (tweet.in_reply_to_user_id != null) {
+					li.addClassName('reply');
+				}
+				
+				$('feed').insert({ top:li });
+				Effect.Appear(li, { queue:'end', duration:0.6 });
+
+			}
+			
+			/*
+			** Sets the caret (cursor) position of the specified text field.
+			** Valid positions are 0-oField.length.
+			*/
+			function doSetCaretPosition (oField, iCaretPos) {
+			
+				// IE Support
+				if (document.selection) { 
+				
+					oField.focus();
+					var oSel = document.selection.createRange();
+					oSel.moveStart('character', -oField.value.length);
+				
+					oSel.moveStart('character', iCaretPos);
+					oSel.moveEnd('character', 0);
+					oSel.select();
+				}
+				
+				// Firefox support
+				else if (oField.selectionStart || oField.selectionStart == '0') {
+					oField.selectionStart = iCaretPos;
+					oField.selectionEnd = iCaretPos;
+					oField.focus();
+				}
+			}
+				
+		</script>
+		
+		<style>
+		
+			body
+				{
+				font-size: 12px;
+				font-family: arial;
+				}
+				
+			td
+				{
+				font-size: 12px;
+				font-family: arial;
+				}
+				
+			#write
+				{
+				width: 100%;
+				border: 1px solid grey;
+				border-bottom: 0;
+				padding: 5px;
+				position: relative;
+				}
+		
+			#ig
+				{
+				width: 100%;
+				height: 500px;
+				overflow: auto;
+				border: 1px solid grey;
+				border-top: 0;
+				}
+		
+			#feed
+				{
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				padding: 0 5px;
+				}
+				
+			#feed table
+				{
+				border-collapse: collapse;
+				width: 100%;
+				}
+				
+			#feed li
+				{
+				padding: 5px;
+				border-bottom: 1px solid #ddd;
+				}
+				
+			.profile
+				{
+				vertical-align: top;
+				padding: 0 5px 0 0;
+				width: 48px;
+				height: 48px;
+				}
+				
+			#feed li td
+				{
+				vertical-align: top;
+				}
+				
+			#feed li td p
+				{
+				margin: 0;
+				}
+				
+			.star
+				{
+				padding: 0 5px 0 0;
+				}
+				
+			.name
+				{
+				font-size: 12px;
+				font-weight: bold;
+				padding: 0 0 5px 0;
+				}
+				
+			.at
+				{
+				color: #aaa;
+				text-align: right;
+				padding: 5px 0 0 0;
+				}
+				
+			.reply
+				{
+				background-color: #eee;
+				background-color: #ffc;
+				}
+				
+			.direct
+				{
+				background-color: #ffc;
+				}
+				
+			#new_tweet
+				{
+				width: 100%;
+				height: 60px;
+				}
+				
+			#remaining
+				{
+				background-color: #aaa;
+				color: #fff;
+				padding: 5px;
+				position: absolute;
+				bottom: 5px;
+				right: 5px;
+				}
+				
+			#write .warning
+				{
+				background-color: orange;
+				}
+				
+			#write .error
+				{
+				background-color: red;
+				}
+				
+			#write .updating
+				{
+				color: #ddd;
+				}
+		
+		</style>
+
+		<a href="javascript:refresh();">Refresh</a>
+		<div id="write">
+			<div id="remaining">140</div>
+			<textarea id="new_tweet"></textarea>
+		</div>
+		<div id="ig">
+			<ul id="feed"></ul>
+		</div>
+
+
+]]></Content>
+</Module>
