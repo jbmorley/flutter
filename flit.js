@@ -69,6 +69,7 @@ function setup_events() {
 function fetch(url, page) {
 	
 	updating = true;
+	$('ld').style.display = 'block';
 	var fetch = url + '?user=' + user + '&pass=' + pass + '&page=' + page;
 	
 	new Ajax.Request(fetch,
@@ -83,13 +84,17 @@ function fetch(url, page) {
 		  	should_load_more();
 		  	
 			setTimeout('fetch(' + '"' + url + '");', 300000);
+
 			updating = false;
+			$('ld').style.display = 'none';
 		  
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
 			
 			updating = false;
+			$('ld').style.display = 'none';
+
 		}
 	  });
 }
