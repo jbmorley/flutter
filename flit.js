@@ -5,6 +5,8 @@
  * http://twitter.com/statuses/update.json
  *
  */
+ 
+var ids = new Array();
 
 function refresh() {
 	setup_events();
@@ -43,10 +45,14 @@ function fetch(url) {
 	  {
 		method:'get',
 		onSuccess: function(transport) {
-		  var result = interpret(transport.responseText);
-		  for (var i=result.length-1; i>=0; i--) {
-		  	add(result[i]);
-		  }
+			var result = interpret(transport.responseText);
+			for (var i=result.length-1; i>=0; i--) {
+				add(result[i]);
+			}
+		  
+			// Set the refresh again...
+			setTimeout('fetch(' + '"' + url + '");', 300000);
+		  
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
@@ -85,84 +91,90 @@ function update(message) {
 
 function add(tweet) {
 	
-	var image = Builder.node('img');
-	image.src = tweet.user.profile_image_url;
-	image.addClassName('profile');
-	var user = Builder.node('a');
-	user.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
-	user.target = '_blank';
-	user.insert(image);
+	if (ids[tweet.id] != 1) {
 	
-	var cell_image = Builder.node('td');
-	cell_image.width = "48px";
-	cell_image.insert(user);
-	
-	var cell_text  = Builder.node('td');
-	
-	var name = Builder.node('p');
-	
-	var star = Builder.node('img');
-	if (tweet.favorited) {
-		star.src = 'images/star-on.png';
-	} else {
-		star.src = 'images/star-off.png';				
-	}
-	star.addClassName('star');
-	
-	name.insert(star);
-	name.insert(tweet.user.name);
-	name.addClassName('name');
-	cell_text.insert(name);
-	
-	// Replace links
-	// TODO Refactor me into a nice little utility function
-	var text = tweet.text;
-	var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
-	text = text.replace(url, '<a target=\'_blank\' href="$1">$1</a>');
-	
-	cell_text.insert('<p>' + text + '</p>');
-	
-	var at = Builder.node('p', tweet.created_at);
-	at.addClassName('at');
-	cell_text.insert(at);
-	
-	cell_text.onclick =
-		function() {
-			var new_tweet = $('new_tweet');
-
-			var reply  = "@" + tweet.user.screen_name + " ";
-			var direct = "d " + tweet.user.screen_name + " ";
-			
-			if (new_tweet.value != reply) {
-				new_tweet.value = reply;
-				new_tweet.activate();
-				doSetCaretPosition(new_tweet, reply.length);
-			} else if (new_tweet.value == reply) {
-				new_tweet.value = direct;
-				new_tweet.activate();
-				doSetCaretPosition(new_tweet, direct.length);
-			}
-
+		ids[tweet.id] = 1;
+		
+		var image = Builder.node('img');
+		image.src = tweet.user.profile_image_url;
+		image.addClassName('profile');
+		var user = Builder.node('a');
+		user.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
+		user.target = '_blank';
+		user.insert(image);
+		
+		var cell_image = Builder.node('td');
+		cell_image.width = "48px";
+		cell_image.insert(user);
+		
+		var cell_text  = Builder.node('td');
+		
+		var name = Builder.node('p');
+		
+		var star = Builder.node('img');
+		if (tweet.favorited) {
+			star.src = 'images/star-on.png';
+		} else {
+			star.src = 'images/star-off.png';				
 		}
+		star.addClassName('star');
+		
+		name.insert(star);
+		name.insert(tweet.user.name);
+		name.addClassName('name');
+		cell_text.insert(name);
+		
+		// Replace links
+		// TODO Refactor me into a nice little utility function
+		var text = tweet.text;
+		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
+		text = text.replace(url, '<a target=\'_blank\' href="$1">$1</a>');
+		
+		cell_text.insert('<p>' + text + '</p>');
+		
+		var at = Builder.node('p', tweet.created_at);
+		at.addClassName('at');
+		cell_text.insert(at);
+		
+		cell_text.onclick =
+			function() {
+				var new_tweet = $('new_tweet');
 	
-	var row_layout = Builder.node('tr');
-	row_layout.insert(cell_image);
-	row_layout.insert(cell_text);
+				var reply  = "@" + tweet.user.screen_name + " ";
+				var direct = "d " + tweet.user.screen_name + " ";
+				
+				if (new_tweet.value != reply) {
+					new_tweet.value = reply;
+					new_tweet.activate();
+					doSetCaretPosition(new_tweet, reply.length);
+				} else if (new_tweet.value == reply) {
+					new_tweet.value = direct;
+					new_tweet.activate();
+					doSetCaretPosition(new_tweet, direct.length);
+				}
 	
-	var table_layout = Builder.node('table');
-	table_layout.insert(row_layout);
-
-	var li = Builder.node('li');
-	li.style.display = 'none';
-	li.insert(table_layout);
+			}
+		
+		var row_layout = Builder.node('tr');
+		row_layout.insert(cell_image);
+		row_layout.insert(cell_text);
+		
+		var table_layout = Builder.node('table');
+		table_layout.insert(row_layout);
 	
-	// Reply
-	if (tweet.in_reply_to_user_id != null) {
-		li.addClassName('reply');
+		var li = Builder.node('li');
+		// li.style.display = 'none';
+		li.insert(table_layout);
+		
+		// Reply
+		if (tweet.in_reply_to_user_id != null) {
+			li.addClassName('reply');
+		}
+		
+		$('feed').insert({ top:li });
+		// Effect.Appear(li, { queue:'end', duration:0.6 });
+		
 	}
-	
-	$('feed').insert({ top:li });
-	Effect.Appear(li, { queue:'end', duration:0.6 });
 
 }
 
