@@ -7,16 +7,37 @@
  */
  
 var maxid = 0;
-var page = 1;
 var ids = new Array();
 var updating = false;
+var active_updates = 0;
 var link_clicked = false;
 var tweet_status = '';
 
+var queue_friends = new Array();
+var queue_directs = new Array();
+
+var page_friends = 1;
+var page_directs = 1;
+
 function refresh() {
 	setup_events();
-	fetch('/twitter/friends_timeline.php', page);
-	fetch('/twitter/direct_messages.php', 1);
+	friends_timeline(page_friends);
+	direct_messages(page_directs);
+}
+
+
+function load_more() {
+
+	// Make sure the buckets aren't empty
+	if (queue_friends.length < 1) {
+		page_friends++;
+		friends_timeline(page_friends);
+	}
+	
+	if (queue_directs.length < 1) {
+	
+	}
+	
 }
 
 function should_load_more() {
@@ -37,14 +58,14 @@ function setup_events() {
 	Event.observe(window, 'scroll', function() { 
   		
   		if (should_load_more() && !updating) {
-  			page++;
-  			fetch('/twitter/friends_timeline.php', page);
+  			page_friends++;
+  			friends_timeline(page_friends);
   		}
  
 	});
 	
 	$('new_tweet').observe('keyup', function(event) { 
-		tweet_color();
+		update_color();
 		update_remaining();
 	});
 
@@ -72,9 +93,34 @@ function setup_events() {
 	
 }
 
+function friends_timeline(page) {
+	fetch(
+		'/twitter/friends_timeline.php',
+		page,
+		function(result) {
+			for (var i=0; i<result.length; i++) {
+				add(result[i]);
+			}
+		}
+	);
+}
 
-function fetch(url, page) {
+function direct_messages(page) {
+	fetch(
+		'/twitter/direct_messages.php',
+		page,
+		function(result) {
+			for (var i=0; i<result.length; i++) {
+				add(result[i]);
+			}
+		}
+	);
+}
+
+
+function fetch(url, page, fn) {
 	
+	active_updates++;
 	updating = true;
 	$('ld').style.display = 'block';
 	var fetch = url + '?page=' + page;
@@ -85,23 +131,24 @@ function fetch(url, page) {
 		parameters: { 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 			var result = interpret(transport.responseText);
-			for (var i=0 ; i<result.length; i++) {
-				add(result[i]);
+			fn(result);
+			
+			active_updates--;
+			if (active_updates < 1) {
+				updating = false;
+				$('ld').style.display = 'none';
 			}
-		  
-		  	should_load_more();
-			setTimeout('fetch(' + '"' + url + '");', 300000);
-
-			updating = false;
-			$('ld').style.display = 'none';
-		  
+			
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
 			
-			updating = false;
-			$('ld').style.display = 'none';
-
+			active_updates--;
+			if (active_updates < 1) {
+				updating = false;
+				$('ld').style.display = 'none';
+			}
+			
 		}
 	  });
 }
@@ -184,7 +231,7 @@ function update(message) {
 			$('remaining').update('140');
 			$('remaining').removeClassName('error');
 			$('remaining').removeClassName('warning');
-			tweet_color();
+			update_color();
 			
 		},
 		onFailure: function() {
@@ -209,7 +256,7 @@ function add(tweet) {
 			profile_image_url = "http://s3.amazonaws.com/twitter_production/profile_images/20443772/user4_normal.jpg";
 			profile_image_url = tweet.sender.profile_image_url;
 			screen_name = tweet.sender_screen_name;
-			user_name = tweet.sender.name;
+			user_name = "Direct from " + tweet.sender.name;
 			direct = true;
 		} else {
 			profile_image_url = tweet.user.profile_image_url;
@@ -269,41 +316,7 @@ function add(tweet) {
 		at.addClassName('at');
 		cell_text.insert(at);
 		
-		cell_text.onclick =
-			function() {
-			
-				if (!link_clicked) {
-			
-					var new_tweet = $('new_tweet');
-					var value = new_tweet.value;
-					if ((value == "")
-						|| (value.match(new RegExp('^@[^\\s]+ $')))
-						|| (value.match(new RegExp('^d [^\\s]+ $')))) {
-		
-						var reply  = "@" + screen_name + " ";
-						var direct = "d " + screen_name + " ";
-						
-						if (new_tweet.value != reply) {
-							new_tweet.value = reply;
-							new_tweet.activate();
-							doSetCaretPosition(new_tweet, reply.length);
-						} else if (new_tweet.value == reply) {
-							new_tweet.value = direct;
-							new_tweet.activate();
-							doSetCaretPosition(new_tweet, direct.length);
-						}
-						
-						tweet_color();
-					
-					}
-					
-				} else {
-				
-					link_clicked = false;
-				
-				}
-	
-			}
+		cell_text.onclick = function() { tweet_clicked(screen_name, direct); }
 		
 		var row_layout = Builder.node('tr');
 		row_layout.insert(cell_image);
@@ -388,7 +401,7 @@ function set_tweet_type(type) {
 
 }
 
-function tweet_color() {
+function update_color() {
 	var new_tweet = $('new_tweet').value;
 	
 	if (new_tweet.match(new RegExp('^@'))) {
@@ -405,4 +418,46 @@ function update_remaining() {
 	var left = 140 - ($('new_tweet').value.length);
 	$('remaining').update(left);
 	return left;
+}
+
+function tweet_clicked(screen_name, is_direct) {
+
+	if (!link_clicked) {
+
+		var new_tweet = $('new_tweet');
+		var value = new_tweet.value;
+		if ((value == "")
+			|| (value.match(new RegExp('^@[^\\s]+ $')))
+			|| (value.match(new RegExp('^d [^\\s]+ $')))) {
+
+			var reply  = "@" + screen_name + " ";
+			var direct = "d " + screen_name + " ";
+			
+			// A bit of a hack - switch the order for direct messages
+			if (is_direct) {
+				reply  = "d " + screen_name + " ";
+				direct = "@" + screen_name + " ";
+			}
+			
+			if (new_tweet.value != reply) {
+				new_tweet.value = reply;
+				new_tweet.activate();
+				doSetCaretPosition(new_tweet, reply.length);
+			} else if (new_tweet.value == reply) {
+				new_tweet.value = direct;
+				new_tweet.activate();
+				doSetCaretPosition(new_tweet, direct.length);
+			}
+			
+			update_color();
+		
+		}
+		
+	} else {
+	
+		link_clicked = false;
+	
+	}
+
+
 }
