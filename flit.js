@@ -21,7 +21,7 @@ function should_load_more() {
 	var height = $('all').getDimensions().height;
 	var scroll = document.viewport.getScrollOffsets().top;
 	
-	if ( scroll >= ( height - 600 ) ) {
+	if ( scroll >= ( height - 700 ) ) {
 		return true;
 	} else {
 		return false;
