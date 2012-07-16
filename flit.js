@@ -198,14 +198,14 @@ function add(tweet) {
 		var image = Builder.node('img');
 		image.src = tweet.user.profile_image_url;
 		image.addClassName('profile');
-		var user = Builder.node('a');
-		user.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
-		user.target = '_blank';
-		user.insert(image);
+		var user_a = Builder.node('a');
+		user_a.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
+		user_a.target = '_blank';
+		user_a.insert(image);
 		
 		var cell_image = Builder.node('td');
 		cell_image.width = "48px";
-		cell_image.insert(user);
+		cell_image.insert(user_a);
 		
 		var cell_text  = Builder.node('td');
 		
@@ -285,7 +285,10 @@ function add(tweet) {
 		li.insert(table_layout);
 		
 		// Reply
-		if (tweet.in_reply_to_user_id != null) {
+		
+		var regexp_reply = new RegExp('\@' + user);
+		
+		if (tweet.text.match(regexp_reply)) {
 			li.addClassName('reply');
 		}
 		
