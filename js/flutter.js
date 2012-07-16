@@ -450,8 +450,7 @@ function add(tweet) {
 		row_layout.insert(cell_image);
 		row_layout.insert(cell_text);
 		
-		var table_layout = Builder.node('table');
-		table_layout.insert(row_layout);
+		var table_layout = Builder.node('table', Builder.node('tbody', row_layout));
 	
 		var li = Builder.node('li');
 		li.id = 'tweet'+tweet.id;
