@@ -45,10 +45,11 @@ function setup_events() {
 	
 	$('new_tweet').observe('keyup', function(event) { 
 		tweet_color();
+		update_remaining();
 	});
 
 	$('new_tweet').observe('keydown', function(event) {
-		var left = 140 - ($('new_tweet').value.length);
+		var left = update_remaining();
 		if (event.keyCode == Event.KEY_RETURN) {
 			Event.stop(event);
 			if (left >= -1) {
@@ -56,7 +57,6 @@ function setup_events() {
 				update($('new_tweet').value);
 			}
 		} else {
-			$('remaining').update(left);
 			if (left < 0) {
 				$('remaining').addClassName('error');
 				$('remaining').removeClassName('warning');
@@ -399,4 +399,10 @@ function tweet_color() {
 		set_tweet_type('');
 	}
 
+}
+
+function update_remaining() {
+	var left = 140 - ($('new_tweet').value.length);
+	$('remaining').update(left);
+	return left;
 }
