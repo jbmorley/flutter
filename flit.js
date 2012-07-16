@@ -101,6 +101,8 @@ function friends_timeline(page) {
 			for (var i=0; i<result.length; i++) {
 				add(result[i]);
 			}
+			should_load_more();
+			setTimeout('friends_timeline(1);', 300000);
 		}
 	);
 }
