@@ -3,7 +3,7 @@
 	$user = (array_key_exists('user', $_POST)) ? $_POST['user'] : "";
 	$pass = (array_key_exists('pass', $_POST)) ? $_POST['pass'] : "";
 
-	define('POSTURL', 'http://'.$user.':'.$pass.'@twitter.com/statuses/update.json');	
+	define('POSTURL', 'https://'.$user.':'.$pass.'@twitter.com/statuses/update.json');	
 	
 	// Ensure that this page is only ever called as a post
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -5,7 +5,7 @@
 	$id = isset($_POST['id']) ? $_POST['id'] : '';
 
 	// Get the parameters
-	define('POSTURL', 'http://'.$user.':'.$pass.'@twitter.com/favorites/create/'.$id.'.json');	
+	define('POSTURL', 'https://'.$user.':'.$pass.'@twitter.com/favorites/create/'.$id.'.json');	
 	
 	// Ensure that this page is only ever called as a post
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
