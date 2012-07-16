@@ -16,9 +16,11 @@ var tweet_status = '';
 
 var queue_friends = new Array();
 var queue_directs = new Array();
+var queue_sent    = new Array();
 
 var page_friends = 0;
 var page_directs = 0;
+var page_sent    = 0;
 
 function refresh() {
 	setup_events();	
@@ -44,6 +46,11 @@ function fetch_tweets_if_necessary() {
 	if (queue_directs.length < 1) {
 		page_directs++;
 		direct_messages(page_directs);
+	}
+	
+	if (queue_sent.length < 1) {
+		page_sent++;
+		sent(page_sent);
 	}
 	
 }
@@ -111,6 +118,24 @@ function date_to_count(date) {
 
 function display_tweets() {
 
+	while (queue_friends.length > 0) {
+		add(queue_friends.shift());
+	}
+	
+	var earliest = tweet_list[tweet_list.length-1].time;
+	
+	/*
+	while ((queue_directs.length > 0) && (date_to_count(queue_directs[0].created_at) > earliest)) {
+		add(queue_directs.shift());
+	}
+	*/
+	
+	while ((queue_sent.length > 0) && (date_to_count(queue_sent[0].created_at) > earliest)) {
+		add(queue_sent.shift());
+	}
+	
+	
+	/*
 	if (active_updates < 1) {
 		
 		while (queue_friends.length > 0) {
@@ -131,6 +156,7 @@ function display_tweets() {
 		}
 
 	}
+	*/
 	
 
 }
@@ -220,6 +246,25 @@ function direct_messages(page) {
 			// Only kick off the periodic updates the first time around
 			if (page == 1) {
 				setTimeout('direct_messages(1);', 300000);
+			}
+		}
+	);
+}
+
+
+function sent(page) {
+	fetch(
+		'/twitter/sent.php',
+		page,
+		function(result) {
+			for (var i=0; i<result.length; i++) {
+				queue_sent.push(result[i]);
+			}
+			display_tweets();
+
+			// Only kick off the periodic updates the first time around
+			if (page == 1) {
+				setTimeout('sent(1);', 300000);
 			}
 		}
 	);
@@ -366,6 +411,9 @@ function add(tweet) {
 			profile_image_url = tweet.sender.profile_image_url;
 			screen_name = tweet.sender_screen_name;
 			user_name = "Direct from " + tweet.sender.name;
+			if (screen_name == user) {
+				user_name = "Direct to " + tweet.recipient.name;
+			}
 			direct = true;
 		} else {
 			profile_image_url = tweet.user.profile_image_url;
