@@ -11,6 +11,7 @@ var page = 1;
 var ids = new Array();
 var updating = false;
 var link_clicked = false;
+var tweet_status = '';
 
 function refresh() {
 	setup_events();
@@ -54,6 +55,7 @@ function setup_events() {
 				update($('new_tweet').value);
 			}
 		} else {
+			tweet_color();
 			$('remaining').update(left);
 			if (left < 0) {
 				$('remaining').addClassName('error');
@@ -322,6 +324,8 @@ function add(tweet) {
 						doSetCaretPosition(new_tweet, direct.length);
 					}
 					
+					tweet_color();
+					
 				} else {
 				
 					link_clicked = false;
@@ -398,4 +402,31 @@ function doSetCaretPosition (oField, iCaretPos) {
 function openInNewWindow(url) {
 	link_clicked = true;
 	window.open(url);
+}
+
+function set_tweet_type(type) {
+
+	if (tweet_status != type) {
+		$('new_tweet').removeClassName(tweet_status);
+		tweet_status = type;
+		
+		if (type != '') {
+			$('new_tweet').addClassName(type);
+		}
+		
+	}
+
+}
+
+function tweet_color() {
+	var new_tweet = $('new_tweet').value;
+	
+	if (new_tweet.match(new RegExp('^\@'))) {
+		set_tweet_type('reply');
+	} else if (new_tweet.match(new RegExp('^\d '))) {
+		set_tweet_type('direct');
+	} else {
+		set_tweet_type('');
+	}
+
 }
