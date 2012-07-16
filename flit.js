@@ -47,16 +47,83 @@ function fetch_tweets_if_necessary() {
 	
 }
 
+function date_to_count(date) {
+
+	// Sat Mar 14 07:40:14 +0000 2008
+	// 012345678911111111112222222222
+	//           01234567890123456789
+
+	var month  = date.substring(4, 7);
+	var day    = date.substring(8, 10);
+	var hour   = date.substring(11, 13);
+	var minute = date.substring(14, 16);
+	var second = date.substring(17, 19);
+	var year   = date.substring(26, 30);
+	
+	var offset_h = date.substring(21, 23);
+	var offset_m = date.substring(23, 25);
+	var type     = date.substring(20, 21);
+	
+	if (month == 'Jan') {
+		month = "00";
+	} else if (month == 'Feb') {
+		month = "01";	
+	} else if (month == 'Mar') {
+		month = "02";
+	} else if (month == 'Apr') {
+		month = "03";
+	} else if (month == 'May') {
+		month = "04";
+	} else if (month == 'Jun') {
+		month = "05";
+	} else if (month == 'Jul') {
+		month = "06";
+	} else if (month == 'Aug') {
+		month = "07";
+	} else if (month == 'Sep') {
+		month = "08";
+	} else if (month == 'Oct') {
+		month = "09";
+	} else if (month == 'Nov') {
+		month = "10";
+	} else if (month == 'Dec') {
+		month = "11";
+	}
+	
+	var d = new Date();
+	d.setYear(year);
+	d.setMonth(month);
+	d.setDate(day);
+	d.setHours(hour);
+	d.setMinutes(minute);
+	d.setSeconds(second);
+	
+	// Time zone correction
+	if (type == '-') {
+		offset_h *= -1;
+		offset_m *= -1;
+	}
+    d.add({ hour: offset_h, minute: offset_m });
+	
+	return d.valueOf();
+	return "" + year + month + day + hour + minute + second + "";
+}
+
 function display_tweets() {
 
 	if (active_updates < 1) {
 		
 		while (queue_friends.length > 0) {
-				
-			var id_friends = queue_friends[0].id;
 			
-			if ((queue_directs.length > 0) && (queue_directs[0].id > id_friends)) {
-				add(queue_directs.shift());
+			var id_friends = date_to_count(queue_friends[0].created_at);
+			
+			if (queue_directs.length > 0) {
+				var id_directs = date_to_count(queue_directs[0].created_at);
+				if (id_directs > id_friends) {
+					add(queue_directs.shift());
+				} else {
+					add(queue_friends.shift());
+				}
 			} else {
 				add(queue_friends.shift());
 			}
@@ -287,7 +354,6 @@ function add(tweet) {
 
 		// Handle direct messages!
 		if (tweet.user == undefined) {
-			profile_image_url = "http://s3.amazonaws.com/twitter_production/profile_images/20443772/user4_normal.jpg";
 			profile_image_url = tweet.sender.profile_image_url;
 			screen_name = tweet.sender_screen_name;
 			user_name = "Direct from " + tweet.sender.name;
@@ -330,7 +396,6 @@ function add(tweet) {
 			}
 		}
 		star.addClassName('star');
-
 		
 		name.insert(star);
 		name.insert(user_name);
@@ -341,10 +406,16 @@ function add(tweet) {
 		var text = tweet.text;
 		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
 		text = text.replace(url, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
-		cell_text.insert('<p>' + text + '</p>');
+		
+		// Replace @username
+		var at_username = new RegExp('(@(\\S+))');
+		text = text.replace(at_username, '<span onclick="openInNewWindow(\'http://www.twitter.com/$2\');" class="link">$1</span>');
+
+		// Actually set the text.
+		cell_text.insert('<p>' + text + '</p>');		
 		
 		var created_at = tweet.created_at;
-		created_at = created_at.substring(0, created_at.length-11);
+		created_at = created_at.substring(0, created_at.length-14);
 		var at = Builder.node('p', created_at);
 		
 		at.addClassName('at');

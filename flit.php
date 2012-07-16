@@ -10,6 +10,7 @@
 			<?php include("builder.js"); ?>
 			<?php include("effects.js"); ?>
 			<?php include("scriptaculous.js"); ?>
+			<?php include("date.js"); ?>
 			<?php include("flit.js"); ?>
 			
 			var user = '<?php echo $_POST['user']; ?>';
