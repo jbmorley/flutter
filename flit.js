@@ -106,6 +106,62 @@ function interpret(json) {
 	return ret;
 }
 
+function create(tweet_id) {
+	
+	var create = '/twitter/create.php' + '?user=' + user + '&pass=' + pass;
+	$('favorite_'+tweet_id).onclick = '';
+	
+	new Ajax.Request(create, {
+		method: 'post',
+		parameters: { id: tweet_id },
+		onSuccess: function(transport) {
+			
+			$('favorite_'+tweet_id).src = 'images/star-on.png';
+			$('favorite_'+tweet_id).onclick = function(event) {
+				destroy(tweet_id);
+				Event.stop(event);
+			}
+			
+		},
+		onFailure: function() {
+			alert('Unable to modify favorite.  Please try again later.')
+			$('favorite_'+tweet_id).onclick = function(event) {
+				create(tweed_id);
+				Event.stop(event);
+			}
+		}
+	});
+
+}
+
+function destroy(tweet_id) {
+
+	var destroy = '/twitter/destroy.php' + '?user=' + user + '&pass=' + pass;
+	$('favorite_'+tweet_id).onclick = '';
+	
+	new Ajax.Request(destroy, {
+		method: 'post',
+		parameters: { id: tweet_id },
+		onSuccess: function(transport) {
+			
+			$('favorite_'+tweet_id).src = 'images/star-off.png';
+			$('favorite_'+tweet_id).onclick = function(event) {
+				create(tweet_id);
+				Event.stop(event);
+			}
+			
+		},
+		onFailure: function() {
+			alert('Unable to modify favorite.  Please try again later.')
+			$('favorite_'+tweet_id).onclick = function(event) {
+				destroy(tweed_id);
+				Event.stop(event);
+			}
+		}
+	});
+
+}
+
 function update(message) {
 	
 	var update = '/twitter/update.php' + '?user=' + user + '&pass=' + pass;
@@ -154,12 +210,22 @@ function add(tweet) {
 		var name = Builder.node('p');
 		
 		var star = Builder.node('img');
+		star.id = "favorite_" + tweet.id;
 		if (tweet.favorited) {
 			star.src = 'images/star-on.png';
+			star.onclick = function(event) {
+				destroy(tweet.id);
+				Event.stop(event);
+			}
 		} else {
 			star.src = 'images/star-off.png';				
+			star.onclick = function(event) {
+				create(tweet.id);
+				Event.stop(event);
+			}
 		}
 		star.addClassName('star');
+
 		
 		name.insert(star);
 		name.insert(tweet.user.name);
