@@ -95,13 +95,12 @@ a img
 	
 .reply
 	{
-	background-color: #eee;
 	background-color: #ffc;
 	}
 	
 .direct
 	{
-	background-color: #ffc;
+	background-color: #eee;
 	}
 	
 #new_tweet

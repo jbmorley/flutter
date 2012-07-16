@@ -15,6 +15,8 @@ var link_clicked = false;
 function refresh() {
 	setup_events();
 	fetch('/twitter/friends_timeline.php', page);
+	fetch('/twitter/direct_messages.php', 1);
+	// fetch_direct('/twitter/direct_messages.php');
 }
 
 function should_load_more() {
@@ -66,6 +68,40 @@ function setup_events() {
 		}
 	});
 	
+}
+
+function fetch_direct(url) {
+
+	new Ajax.Request(url,
+	  {
+		method:'post',
+		parameters: { 'user': user, 'pass': pass },
+		onSuccess: function(transport) {
+			
+			var result = interpret(transport.responseText);
+			for (var i=0 ; i<result.length; i++) {
+				add(result[i]);
+				alert(result[i].text);
+			}
+		  
+		 	/*
+		  	should_load_more();
+			setTimeout('fetch(' + '"' + url + '");', 300000);
+			updating = false;
+			$('ld').style.display = 'none';
+			*/
+		  
+		},
+		onFailure: function() {
+			alert('Unable to query Twitter.  Please try again later.');
+			
+			updating = false;
+			$('ld').style.display = 'none';
+
+		}
+	  });
+
+
 }
 
 function fetch(url, page) {
@@ -195,11 +231,28 @@ function add(tweet) {
 	
 		ids[tweet.id] = 1;
 		
+		var profile_image_url = '';
+		var screen_name = '';
+		var user_name = '';
+
+		// Handle direct messages!		
+		if (tweet.user == undefined) {
+			profile_image_url = "http://s3.amazonaws.com/twitter_production/profile_images/20443772/user4_normal.jpg";
+			profile_image_url = tweet.sender.profile_image_url;
+			screen_name = tweet.sender_screen_name;
+			user_name = tweet.sender.name;
+			direct = true;
+		} else {
+			profile_image_url = tweet.user.profile_image_url;
+			screen_name = tweet.user.screen_name;
+			user_name = tweet.user.name;
+		}
+		
 		var image = Builder.node('img');
-		image.src = tweet.user.profile_image_url;
+		image.src = profile_image_url;
 		image.addClassName('profile');
 		var user_a = Builder.node('a');
-		user_a.href = 'http://twitter.com/' + tweet.user.screen_name + '/';
+		user_a.href = 'http://twitter.com/' + screen_name + '/';
 		user_a.target = '_blank';
 		user_a.insert(image);
 		
@@ -230,7 +283,7 @@ function add(tweet) {
 
 		
 		name.insert(star);
-		name.insert(tweet.user.name);
+		name.insert(user_name);
 		name.addClassName('name');
 		cell_text.insert(name);
 		
@@ -252,8 +305,8 @@ function add(tweet) {
 			
 					var new_tweet = $('new_tweet');
 		
-					var reply  = "@" + tweet.user.screen_name + " ";
-					var direct = "d " + tweet.user.screen_name + " ";
+					var reply  = "@" + screen_name + " ";
+					var direct = "d " + screen_name + " ";
 					
 					if (new_tweet.value != reply) {
 						new_tweet.value = reply;
@@ -290,6 +343,10 @@ function add(tweet) {
 		
 		if (tweet.text.match(regexp_reply)) {
 			li.addClassName('reply');
+		}
+		
+		if (direct) {
+			li.addClassName('direct');
 		}
 		
 		// If the tweet has a higher id than we've seen, place it at the top
