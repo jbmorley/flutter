@@ -55,7 +55,6 @@ function setup_events() {
 				update($('new_tweet').value);
 			}
 		} else {
-			tweet_color();
 			$('remaining').update(left);
 			if (left < 0) {
 				$('remaining').addClassName('error');
@@ -68,6 +67,7 @@ function setup_events() {
 				$('remaining').removeClassName('error');
 			}
 		}
+		tweet_color();
 	});
 	
 }
