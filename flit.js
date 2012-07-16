@@ -6,8 +6,9 @@
  *
  */
  
-var maxid = 0;
-var ids = new Array();
+var ids        = new Array();
+var tweet_list = new Array();
+
 var updating = false;
 var active_updates = 0;
 var link_clicked = false;
@@ -196,8 +197,12 @@ function friends_timeline(page) {
 				queue_friends.push(result[i]);
 			}
 			display_tweets();
-			// TODO Do this with a periodic.
-			setTimeout('friends_timeline(1);', 300000);
+
+			// Only kick off the periodic updates the first time around
+			if (page == 1) {
+				setTimeout('friends_timeline(1);', 300000);
+			}
+			
 		}
 	);
 }
@@ -211,8 +216,11 @@ function direct_messages(page) {
 				queue_directs.push(result[i]);
 			}
 			display_tweets();
-			// TODO Do this with a periodic.
-			setTimeout('direct_messages(1);', 300000);
+
+			// Only kick off the periodic updates the first time around
+			if (page == 1) {
+				setTimeout('direct_messages(1);', 300000);
+			}
 		}
 	);
 }
@@ -342,11 +350,11 @@ function update(message) {
 
 function add(tweet) {
 	
-	var tweet_id = date_to_count(tweet.created_at);
+	var tweet_time = date_to_count(tweet.created_at);
 	
-	if (ids[tweet_id] != 1) {
+	if (ids[tweet.id] != 1) {
 	
-		ids[tweet_id] = 1;
+		ids[tweet.id] = 1;
 		
 		var profile_image_url = '';
 		var screen_name = '';
@@ -432,6 +440,7 @@ function add(tweet) {
 		table_layout.insert(row_layout);
 	
 		var li = Builder.node('li');
+		li.id = 'tweet'+tweet.id;
 		li.insert(table_layout);
 		
 		// Reply
@@ -446,20 +455,48 @@ function add(tweet) {
 			li.addClassName('direct');
 		}
 		
-		// If the tweet has a higher id than we've seen, place it at the top
-		// otherwise place it at the bottom
-		if (tweet_id > maxid) {
-			$('feed').insert({ top:li });
-		} else {
+		// If the tweet has a lower id than the minimum, then place it at the bottom
+		// If it has a higher one, place it at the top
+		// If not, we need to pick an end and work in
+		if (tweet_list.length < 1) {
+			
+			// Just insert it as it's the first
 			$('feed').insert(li);
-		}
+			tweet_list.push({ time:tweet_time, id:tweet.id });
+			
+		} else if (tweet_time < (tweet_list[tweet_list.length-1]).time) {
+			
+			// Place at the bottom
+			$('feed').insert(li);
+			tweet_list.push({ time:tweet_time, id:tweet.id });
+			
+		} else if (tweet_time > tweet_list[0].time) {
 		
-		// Update the maxid based on this tweet
-		maxid = (tweet_id > maxid) ? tweet_id : maxid;
+			// Place at the top
+			$('feed').insert({ top: li });
+			tweet_list.unshift({ time:tweet_time, id:tweet.id });
+			
+		} else {
+
+			// Insert it at the correct place in the list
+			var idx = find_target_id(tweet_list, tweet_time);
+			$('tweet'+tweet_list[idx].id).insert({ after: li });
+			tweet_list.splice(idx, 0, { time:tweet_time, id:tweet.id });
+		
+		}
 		
 	}
 
 }
+
+function find_target_id(list, time) {
+	for (var i=0; i<list.length; i++) {
+		if (list[i].time > time) {
+			return i;
+		}
+	}
+}
+
 
 /*
 ** Sets the caret (cursor) position of the specified text field.
