@@ -6,14 +6,41 @@
  *
  */
  
+var maxid = 0;
+var page = 1;
 var ids = new Array();
+var updating = false;
 
 function refresh() {
 	setup_events();
-	fetch('/flit/statuses/friends_timeline.php');
+	fetch('/flit/statuses/friends_timeline.php', page);
+}
+
+function should_load_more() {
+
+	var height = $('all').getDimensions().height;
+	var scroll = document.viewport.getScrollOffsets().top;
+	
+	if ( scroll >= ( height - 600 ) ) {
+		return true;
+	} else {
+		return false;
+	}
+
 }
 
 function setup_events() {
+
+	Event.observe(window, 'scroll', function() { 
+  		
+  		if (should_load_more() && !updating) {
+  		
+  			page++;
+  			fetch('/flit/statuses/friends_timeline.php', page);
+			
+  		}
+ 
+	});
 
 	$('new_tweet').observe('keyup', function(event) {
 		var left = 140 - ($('new_tweet').value.length);
@@ -39,23 +66,29 @@ function setup_events() {
 	
 }
 
-function fetch(url) {
+function fetch(url, page) {
 	
-	new Ajax.Request(url,
+	updating = true;
+	
+	new Ajax.Request(url + '?page=' + page,
 	  {
 		method:'get',
 		onSuccess: function(transport) {
 			var result = interpret(transport.responseText);
-			for (var i=result.length-1; i>=0; i--) {
+			for (var i=0 ; i<result.length; i++) {
 				add(result[i]);
 			}
 		  
-			// Set the refresh again...
+		  	should_load_more();
+		  	
 			setTimeout('fetch(' + '"' + url + '");', 300000);
+			updating = false;
 		  
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
+			
+			updating = false;
 		}
 	  });
 }
@@ -171,8 +204,16 @@ function add(tweet) {
 			li.addClassName('reply');
 		}
 		
-		$('feed').insert({ top:li });
-		// Effect.Appear(li, { queue:'end', duration:0.6 });
+		// If the tweet has a higher id than we've seen, place it at the top
+		// otherwise place it at the bottom
+		if (tweet.id > maxid) {
+			$('feed').insert({ top:li });
+		} else {
+			$('feed').insert(li);
+		}
+		
+		// Update the maxid based on this tweet
+		maxid = (tweet.id > maxid) ? tweet.id : maxid;
 		
 	}
 
