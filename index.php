@@ -20,6 +20,6 @@
 	</style>
 		
 	<body>
-		<iframe id="flutter" src="flit.php"></iframe>
+		<iframe id="flutter" src="flit.php?user=jbmorley&pass=flurbles"></iframe>
 	</body>
 </html>

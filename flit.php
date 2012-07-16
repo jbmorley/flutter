@@ -30,6 +30,7 @@
 			</div>
 		</div>
 		<ul id="feed"></ul>
+		<div id="ld">Loading...</div>
 		
 	</body>
 	
