@@ -9,6 +9,8 @@
 			body
 				{
 				text-align: center;
+				margin: 0;
+				padding: 0;
 				}
 		
 			#flutter
@@ -17,9 +19,8 @@
 				margin: 0;
 				padding: 0;
 				overflow-y: scroll;
-				margin: auto;
 				width: 100%;
-				height: 100%;
+				height: 350px;
 				}
 		</style>
 		
@@ -41,7 +42,7 @@
 				<input type='hidden' id='pass' name='pass' value=''>
 				<input type='submit'/>
 			</form>
-			<iframe name="flutter" id="flutter"></iframe>
+			<iframe frameborder="0" border="0" width="100%" name="flutter" id="flutter"></iframe>
 		</body>
 	
 	]]></Content>
