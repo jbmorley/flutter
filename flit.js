@@ -106,7 +106,6 @@ function date_to_count(date) {
     d.add({ hour: offset_h, minute: offset_m });
 	
 	return d.valueOf();
-	return "" + year + month + day + hour + minute + second + "";
 }
 
 function display_tweets() {
@@ -343,9 +342,11 @@ function update(message) {
 
 function add(tweet) {
 	
-	if (ids[tweet.id] != 1) {
+	var tweet_id = date_to_count(tweet.created_at);
 	
-		ids[tweet.id] = 1;
+	if (ids[tweet_id] != 1) {
+	
+		ids[tweet_id] = 1;
 		
 		var profile_image_url = '';
 		var screen_name = '';
@@ -447,14 +448,14 @@ function add(tweet) {
 		
 		// If the tweet has a higher id than we've seen, place it at the top
 		// otherwise place it at the bottom
-		if (tweet.id > maxid) {
+		if (tweet_id > maxid) {
 			$('feed').insert({ top:li });
 		} else {
 			$('feed').insert(li);
 		}
 		
 		// Update the maxid based on this tweet
-		maxid = (tweet.id > maxid) ? tweet.id : maxid;
+		maxid = (tweet_id > maxid) ? tweet_id : maxid;
 		
 	}
 
