@@ -29,7 +29,7 @@
 		<script>
 		
 			function load() {
-				var prefs = new gadgets.Prefs();
+				var prefs = new _IG_Prefs();
 				document.getElementById('user').value = prefs.getString("user");
 				document.getElementById('pass').value = prefs.getString("pass");
 				document.getElementById('user_form').submit();
@@ -40,8 +40,9 @@
 			
 		<body onload="load()">
 			<form style='display:none;' id='user_form' method='post' action='http://flutter.jbmorley.co.uk/flutter.php' target='flutter'>
-				<input type='hidden' id='user' name='user' value='jbmorley'>
-				<input type='hidden' id='pass' name='pass' value='flurbles'>
+				<input type='hidden' id='user' name='user' value=''>
+				<input type='hidden' id='pass' name='pass' value=''>
+				<input type='submit'/>
 			</form>
 			<iframe name="flutter" id="flutter"></iframe>
 		</body>
