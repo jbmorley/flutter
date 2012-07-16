@@ -238,8 +238,24 @@ function sent(page) {
 }
 
 
-function silence() {
+function silence(message) {
+
 	silenced = true;
+	
+	var tr = Builder.node('tr');
+	tr.insert(Builder.node('td', message));
+	
+	var table = Builder.node('table', Builder.node('tbody', tr));
+
+	var li = Builder.node('li');
+	li.insert(table);
+	li.addClassName('fail');
+	
+	$('feed').insert({ top: li });
+	
+	updating = false;
+	$('ld').style.display = 'none';
+	
 }
 
 
@@ -257,8 +273,7 @@ function fetch(url, page, fn) {
 		onSuccess: function(transport) {
 			if (!silenced) {
 				if (transport.responseText.substring(0, 6) == '<br />') {
-					silence();
-					alert('Unable to fetch tweets.  Please check your username and password and refresh the page.');
+					silence('Unable to fetch tweets for \'' + user + '\'.  Please check your username and password and refresh the page.');
 				} else {
 				
 					var result = interpret(transport.responseText);

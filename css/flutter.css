@@ -103,6 +103,16 @@ a img
 	background-color: #eee;
 	}
 	
+.fail
+	{
+	background-color: #c44;
+	}
+	
+.fail td
+	{
+	color: #fff;
+	}
+	
 #new_tweet
 	{
 	width: 100%;
