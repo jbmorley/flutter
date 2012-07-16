@@ -3,7 +3,7 @@
 		<title>Flutter Login</title>
 		<style>
 		
-			@import url(css/flutter.css);
+			<?php include("css/flutter.css"); ?>
 			
 			#login
 				{

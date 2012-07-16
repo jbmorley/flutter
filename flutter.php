@@ -18,7 +18,11 @@
 			// -->
 						
 		</script>				
-		<style> @import url("flit.css"); </style>
+		<style>
+		
+			<?php include("css/flutter.css"); ?>
+		
+		</style>
 		
 	</head>
 	
