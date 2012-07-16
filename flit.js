@@ -42,9 +42,10 @@ function setup_events() {
  
 	});
 
-	$('new_tweet').observe('keyup', function(event) {
+	$('new_tweet').observe('keydown', function(event) {
 		var left = 140 - ($('new_tweet').value.length);
 		if (event.keyCode == Event.KEY_RETURN) {
+			Event.stop(event);
 			if (left >= -1) {
 				$('new_tweet').addClassName('updating');
 				update($('new_tweet').value);
