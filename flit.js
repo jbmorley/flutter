@@ -213,12 +213,12 @@ function update(message) {
 		
 			add(interpret(transport.responseText));
 			
-			// TODO Refactor this into a slightly more elegant location
 			$('new_tweet').value = '';
 			$('new_tweet').removeClassName('updating');
 			$('remaining').update('140');
 			$('remaining').removeClassName('error');
 			$('remaining').removeClassName('warning');
+			tweet_color();
 			
 		},
 		onFailure: function() {
