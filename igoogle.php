@@ -39,7 +39,7 @@
 		</script>
 			
 		<body onload="load()">
-			<form style='display:none;' id='user_form' method='post' action='http://flutter.jbmorley.co.uk/flit.php' target='flutter'>
+			<form style='display:none;' id='user_form' method='post' action='http://flutter.jbmorley.co.uk/flutter.php' target='flutter'>
 				<input type='hidden' id='user' name='user' value='jbmorley'>
 				<input type='hidden' id='pass' name='pass' value='flurbles'>
 			</form>
