@@ -6,10 +6,15 @@ body
 	padding: 1px;
 	}
 	
-td
+td, th
 	{
 	font-size: 12px;
 	font-family: arial;
+	}
+	
+th
+	{
+	text-align: right;
 	}
 	
 a img

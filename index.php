@@ -19,13 +19,8 @@
 			padding: 5px 0 5px 5px;
 			}
 	</style>
-	
-	<form style='display:none;' id='user_form' method='post' action='http://flutter.jbmorley.co.uk/flit.php' target='flutter'>
-		<input type='hidden' name='user' value='jbmorley'>
-		<input type='hidden' name='pass' value='flurbles'>
-	</form>
 		
-	<body onload="document.getElementById('user_form').submit();">
-		<iframe name="flutter" id="flutter" src=""></iframe>
+	<body>
+		<iframe name="flutter" id="flutter" src="login.html"></iframe>
 	</body>
 </html>
