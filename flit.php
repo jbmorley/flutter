@@ -12,8 +12,8 @@
 			<?php include("scriptaculous.js"); ?>
 			<?php include("flit.js"); ?>
 			
-			var user = '<?php echo $_GET['user']; ?>';
-			var pass = '<?php echo $_GET['pass']; ?>';
+			var user = '<?php echo $_POST['user']; ?>';
+			var pass = '<?php echo $_POST['pass']; ?>';
 			// -->
 						
 		</script>				

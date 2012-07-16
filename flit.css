@@ -141,4 +141,10 @@ a img
 	position: fixed;
 	display: none;
 	}
+	
+.link
+	{
+	text-decoration: underline;
+	color: blue;
+	}
 

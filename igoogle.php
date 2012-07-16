@@ -30,20 +30,20 @@
 		
 			function load() {
 				var prefs = new gadgets.Prefs();
-				
-				var user = prefs.getString("user");
-				var pass = prefs.getString("pass");
-				
-				var url = "http://flutter.jbmorley.co.uk/flit.php?user=" + user + "&pass=" + pass;
-				
-				document.getElementById('flutter').src = url;
+				document.getElementById('user').value = prefs.getString("user");
+				document.getElementById('pass').value = prefs.getString("pass");
+				document.getElementById('user_form').submit();
 			}
 			
 		
 		</script>
 			
 		<body onload="load()">
-			<iframe id="flutter"></iframe>
+			<form style='display:none;' id='user_form' method='post' action='http://flutter.jbmorley.co.uk/flit.php' target='flutter'>
+				<input type='hidden' id='user' name='user' value='jbmorley'>
+				<input type='hidden' id='pass' name='pass' value='flurbles'>
+			</form>
+			<iframe name="flutter" id="flutter"></iframe>
 		</body>
 	
 	]]></Content>

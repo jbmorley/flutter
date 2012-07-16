@@ -1,7 +1,7 @@
 <?php
 
-	$user = (array_key_exists('user', $_GET)) ? $_GET['user'] : "";
-	$pass = (array_key_exists('pass', $_GET)) ? $_GET['pass'] : "";
+	$user = (array_key_exists('user', $_POST)) ? $_POST['user'] : "";
+	$pass = (array_key_exists('pass', $_POST)) ? $_POST['pass'] : "";
 	$id = isset($_POST['id']) ? $_POST['id'] : '';
 
 	// Get the parameters

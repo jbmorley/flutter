@@ -10,6 +10,7 @@ var maxid = 0;
 var page = 1;
 var ids = new Array();
 var updating = false;
+var link_clicked = false;
 
 function refresh() {
 	setup_events();
@@ -71,11 +72,12 @@ function fetch(url, page) {
 	
 	updating = true;
 	$('ld').style.display = 'block';
-	var fetch = url + '?user=' + user + '&pass=' + pass + '&page=' + page;
+	var fetch = url + '?page=' + page;
 	
 	new Ajax.Request(fetch,
 	  {
-		method:'get',
+		method:'post',
+		parameters: { 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 			var result = interpret(transport.responseText);
 			for (var i=0 ; i<result.length; i++) {
@@ -108,12 +110,12 @@ function interpret(json) {
 
 function create(tweet_id) {
 	
-	var create = '/twitter/create.php' + '?user=' + user + '&pass=' + pass;
+	var create = '/twitter/create.php';
 	$('favorite_'+tweet_id).onclick = '';
 	
 	new Ajax.Request(create, {
 		method: 'post',
-		parameters: { id: tweet_id },
+		parameters: { 'id': tweet_id, 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 			
 			$('favorite_'+tweet_id).src = 'images/star-on.png';
@@ -136,12 +138,12 @@ function create(tweet_id) {
 
 function destroy(tweet_id) {
 
-	var destroy = '/twitter/destroy.php' + '?user=' + user + '&pass=' + pass;
+	var destroy = '/twitter/destroy.php';
 	$('favorite_'+tweet_id).onclick = '';
 	
 	new Ajax.Request(destroy, {
 		method: 'post',
-		parameters: { id: tweet_id },
+		parameters: { 'id': tweet_id, 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 			
 			$('favorite_'+tweet_id).src = 'images/star-off.png';
@@ -164,11 +166,11 @@ function destroy(tweet_id) {
 
 function update(message) {
 	
-	var update = '/twitter/update.php' + '?user=' + user + '&pass=' + pass;
+	var update = '/twitter/update.php';
 	
 	new Ajax.Request(update, {
 		method: 'post',
-		parameters: { status: message },
+		parameters: { status: message, 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 		
 			add(interpret(transport.responseText));
@@ -236,29 +238,37 @@ function add(tweet) {
 		// TODO Refactor me into a nice little utility function
 		var text = tweet.text;
 		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
-		text = text.replace(url, '<a target=\'_blank\' href="$1">$1</a>');
-		
+		text = text.replace(url, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
 		cell_text.insert('<p>' + text + '</p>');
-		
+				
 		var at = Builder.node('p', tweet.created_at);
 		at.addClassName('at');
 		cell_text.insert(at);
 		
 		cell_text.onclick =
 			function() {
-				var new_tweet = $('new_tweet');
-	
-				var reply  = "@" + tweet.user.screen_name + " ";
-				var direct = "d " + tweet.user.screen_name + " ";
+			
+				if (!link_clicked) {
+			
+					var new_tweet = $('new_tweet');
+		
+					var reply  = "@" + tweet.user.screen_name + " ";
+					var direct = "d " + tweet.user.screen_name + " ";
+					
+					if (new_tweet.value != reply) {
+						new_tweet.value = reply;
+						new_tweet.activate();
+						doSetCaretPosition(new_tweet, reply.length);
+					} else if (new_tweet.value == reply) {
+						new_tweet.value = direct;
+						new_tweet.activate();
+						doSetCaretPosition(new_tweet, direct.length);
+					}
+					
+				} else {
 				
-				if (new_tweet.value != reply) {
-					new_tweet.value = reply;
-					new_tweet.activate();
-					doSetCaretPosition(new_tweet, reply.length);
-				} else if (new_tweet.value == reply) {
-					new_tweet.value = direct;
-					new_tweet.activate();
-					doSetCaretPosition(new_tweet, direct.length);
+					link_clicked = false;
+				
 				}
 	
 			}
@@ -318,4 +328,10 @@ function doSetCaretPosition (oField, iCaretPos) {
 		oField.selectionEnd = iCaretPos;
 		oField.focus();
 	}
+}
+
+
+function openInNewWindow(url) {
+	link_clicked = true;
+	window.open(url);
 }

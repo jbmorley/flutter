@@ -1,7 +1,7 @@
 <?php
 
-	$user = (array_key_exists('user', $_GET)) ? $_GET['user'] : "";
-	$pass = (array_key_exists('pass', $_GET)) ? $_GET['pass'] : "";
+	$user = (array_key_exists('user', $_POST)) ? $_POST['user'] : "";
+	$pass = (array_key_exists('pass', $_POST)) ? $_POST['pass'] : "";
 
 	define('POSTURL', 'http://'.$user.':'.$pass.'@twitter.com/statuses/update.json');	
 	
