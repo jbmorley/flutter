@@ -50,16 +50,17 @@ function fetch_tweets_if_necessary() {
 function display_tweets() {
 
 	if (active_updates < 1) {
-	
-		// Attempt to re-thread the tweets.
-		var count_friends = 0;
-		var count_directs = 0;
 		
-		while (count_friends < queue_friends.length) {
-		
-			add(queue_friends[count_friends]);
-			count_friends++;
-		
+		while (queue_friends.length > 0) {
+				
+			var id_friends = queue_friends[0].id;
+			
+			if ((queue_directs.length > 0) && (queue_directs[0].id > id_friends)) {
+				add(queue_directs.shift());
+			} else {
+				add(queue_friends.shift());
+			}
+			
 		}
 
 	}
