@@ -11,7 +11,7 @@
 		#flutter
 			{
 			border: 1px solid grey;
-			overflow: scroll;
+			overflow-y: scroll;
 			margin: auto;
 			width: 400px;
 			height: 500px;
