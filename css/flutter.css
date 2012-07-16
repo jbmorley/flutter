@@ -4,6 +4,7 @@ body
 	font-family: arial;
 	margin: 0;
 	padding: 1px;
+	overflow-y: scroll;
 	}
 	
 #all
@@ -60,6 +61,11 @@ body > #write_super
 	width: 100%;
 	}
 	
+.tweet_container
+	{
+	width: 100%;
+	}
+	
 #feed li
 	{
 	padding: 5px;
@@ -77,6 +83,11 @@ body > #write_super
 #feed li td
 	{
 	vertical-align: top;
+	}
+	
+#feed li td .text
+	{
+	width: 100%;
 	}
 	
 #feed li td p

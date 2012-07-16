@@ -441,6 +441,7 @@ function add(tweet) {
 		cell_image.insert(user_a);
 		
 		var cell_text  = Builder.node('td');
+		cell_text.addClassName('text');
 		
 		var name = Builder.node('p');
 		
@@ -488,10 +489,13 @@ function add(tweet) {
 		row_layout.insert(cell_text);
 		
 		var table_layout = Builder.node('table', Builder.node('tbody', row_layout));
+		
+		var tweet_container = Builder.node('div', table_layout);
+		tweet_container.addClassName('tweet_container');
 	
 		var li = Builder.node('li');
 		li.id = 'tweet'+tweet.id;
-		li.insert(table_layout);
+		li.insert(tweet_container);
 		
 		// Reply
 		
