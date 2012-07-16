@@ -13,7 +13,7 @@ var updating = false;
 
 function refresh() {
 	setup_events();
-	fetch('/statuses/friends_timeline.php', page);
+	fetch('/twitter/friends_timeline.php', page);
 }
 
 function should_load_more() {
@@ -36,7 +36,7 @@ function setup_events() {
   		if (should_load_more() && !updating) {
   		
   			page++;
-  			fetch('/statuses/friends_timeline.php', page);
+  			fetch('/twitter/friends_timeline.php', page);
 			
   		}
  
@@ -107,7 +107,7 @@ function interpret(json) {
 
 function update(message) {
 	
-	var update = '/statuses/update.php' + '?user=' + user + '&pass=' + pass;
+	var update = '/twitter/update.php' + '?user=' + user + '&pass=' + pass;
 	
 	new Ajax.Request(update, {
 		method: 'post',
