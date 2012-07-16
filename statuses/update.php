@@ -1,5 +1,9 @@
 <?php
-	define('POSTURL', 'http://jbmorley:flurbles@twitter.com/statuses/update.json');	
+
+	$user = (array_key_exists('user', $_GET)) ? $_GET['user'] : "";
+	$pass = (array_key_exists('pass', $_GET)) ? $_GET['pass'] : "";
+
+	define('POSTURL', 'http://'.$user.':'.$pass.'@twitter.com/statuses/update.json');	
 	
 	// Ensure that this page is only ever called as a post
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
