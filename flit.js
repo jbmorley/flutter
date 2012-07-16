@@ -124,41 +124,14 @@ function display_tweets() {
 	
 	var earliest = tweet_list[tweet_list.length-1].time;
 	
-	/*
 	while ((queue_directs.length > 0) && (date_to_count(queue_directs[0].created_at) > earliest)) {
 		add(queue_directs.shift());
 	}
-	*/
 	
 	while ((queue_sent.length > 0) && (date_to_count(queue_sent[0].created_at) > earliest)) {
 		add(queue_sent.shift());
 	}
 	
-	
-	/*
-	if (active_updates < 1) {
-		
-		while (queue_friends.length > 0) {
-			
-			var id_friends = date_to_count(queue_friends[0].created_at);
-			
-			if (queue_directs.length > 0) {
-				var id_directs = date_to_count(queue_directs[0].created_at);
-				if (id_directs > id_friends) {
-					add(queue_directs.shift());
-				} else {
-					add(queue_friends.shift());
-				}
-			} else {
-				add(queue_friends.shift());
-			}
-			
-		}
-
-	}
-	*/
-	
-
 }
 
 function should_load_more() {
