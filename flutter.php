@@ -26,7 +26,7 @@
 		
 	</head>
 	
-	<body id="all" onload="refresh();">
+	<body onload="refresh();">
 
 		<div id="write_super">
 			<div id="write">
@@ -34,8 +34,10 @@
 				<textarea id="new_tweet"></textarea>
 			</div>
 		</div>
-		<ul id="feed"></ul>
-		<div id="ld">Loading...</div>
+		<div id='all'>
+			<ul id="feed"></ul>
+			<div id="ld">Loading...</div>
+		</div>
 		
 	</body>
 	

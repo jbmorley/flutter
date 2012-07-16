@@ -6,6 +6,11 @@ body
 	padding: 1px;
 	}
 	
+#all
+	{
+	margin: 65px 0 0 0;
+	}
+	
 td, th
 	{
 	font-size: 12px;
@@ -45,7 +50,7 @@ body > #write_super
 	{
 	list-style: none;
 	padding: 0;
-	margin: 65px 0 0 0;
+	margin: 0;
 	padding-bottom: 200px;
 	}
 	
