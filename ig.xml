@@ -1,7 +1,4 @@
-<?php
-	header ("Content-Type:text/xml");
-	print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Module>
 	<ModulePrefs title="Flutter" height="350" />
 	<UserPref name="user" display_name="Username" required="true" />
