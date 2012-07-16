@@ -38,17 +38,17 @@ function fetch_tweets_if_necessary() {
 	// when there are no outstanding updates and will
 	// interlace all the current tweets to the UI.
 
-	if (queue_friends.length < 1) {
+	if (queue_friends.length < 20) {
 		page_friends++;
 		friends_timeline(page_friends);
 	}
 	
-	if (queue_directs.length < 1) {
+	if (queue_directs.length < 20) {
 		page_directs++;
 		direct_messages(page_directs);
 	}
 	
-	if (queue_sent.length < 1) {
+	if (queue_sent.length < 20) {
 		page_sent++;
 		sent(page_sent);
 	}
@@ -264,7 +264,7 @@ function fetch(url, page, fn) {
 				$('ld').style.display = 'none';
 			}
 
-			fn(result);			
+			fn(result);
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
@@ -512,7 +512,7 @@ function add(tweet) {
 
 function find_target_id(list, time) {
 	for (var i=0; i<list.length; i++) {
-		if (list[i].time > time) {
+		if (list[i].time < time) {
 			return i;
 		}
 	}
