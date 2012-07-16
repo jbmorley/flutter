@@ -22,6 +22,8 @@ var page_friends = 0;
 var page_directs = 0;
 var page_sent    = 0;
 
+var silenced     = false;
+
 function refresh() {
 	setup_events();	
 	fetch_tweets_if_necessary();
@@ -236,6 +238,11 @@ function sent(page) {
 }
 
 
+function silence() {
+	silenced = true;
+}
+
+
 function fetch(url, page, fn) {
 	
 	active_updates++;
@@ -248,23 +255,34 @@ function fetch(url, page, fn) {
 		method:'post',
 		parameters: { 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
-			var result = interpret(transport.responseText);
-			
-			active_updates--;
-			if (active_updates < 1) {
-				updating = false;
-				$('ld').style.display = 'none';
+			if (!silenced) {
+				if (transport.responseText.substring(0, 6) == '<br />') {
+					silence();
+					alert('Unable to fetch tweets.  Please check your username and password and refresh the page.');
+				} else {
+				
+					var result = interpret(transport.responseText);
+					
+					active_updates--;
+					if (active_updates < 1) {
+						updating = false;
+						$('ld').style.display = 'none';
+					}
+		
+					fn(result);
+					
+				}
 			}
-
-			fn(result);
 		},
 		onFailure: function() {
-			alert('Unable to query Twitter.  Please try again later.');
-			
-			active_updates--;
-			if (active_updates < 1) {
-				updating = false;
-				$('ld').style.display = 'none';
+			if (!silenced) {
+				alert('Unable to query Twitter.  Please try again later.');
+				
+				active_updates--;
+				if (active_updates < 1) {
+					updating = false;
+					$('ld').style.display = 'none';
+				}
 			}
 			
 		}
