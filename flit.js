@@ -276,7 +276,9 @@ function add(tweet) {
 			
 					var new_tweet = $('new_tweet');
 					var value = new_tweet.value;
-					if (value.match(new RegExp('^((\s*)|(\@[^\s]+ )|(d [^\s]+ ))$'))) {
+					if ((value == "")
+						|| (value.match(new RegExp('^@[^\\s]+ $')))
+						|| (value.match(new RegExp('^d [^\\s]+ $')))) {
 		
 						var reply  = "@" + screen_name + " ";
 						var direct = "d " + screen_name + " ";
@@ -315,7 +317,7 @@ function add(tweet) {
 		
 		// Reply
 		
-		var regexp_reply = new RegExp('\@' + user);
+		var regexp_reply = new RegExp('@' + user);
 		
 		if (tweet.text.match(regexp_reply)) {
 			li.addClassName('reply');
@@ -389,7 +391,7 @@ function set_tweet_type(type) {
 function tweet_color() {
 	var new_tweet = $('new_tweet').value;
 	
-	if (new_tweet.match(new RegExp('^\@'))) {
+	if (new_tweet.match(new RegExp('^@'))) {
 		set_tweet_type('reply');
 	} else if (new_tweet.match(new RegExp('^\d '))) {
 		set_tweet_type('direct');
