@@ -15,7 +15,7 @@
 			margin: auto;
 			width: 400px;
 			height: 500px;
-			padding: 0;
+			padding: 5px 0 5px 5px;
 			}
 	</style>
 		
