@@ -15,7 +15,7 @@
 		// Construct the CURL call	
 		$ch = curl_init(POSTURL);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS    ,'status='.$status);
+		curl_setopt($ch, CURLOPT_POSTFIELDS    ,'status='.$status.'&source=flutter');
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);  // DO NOT RETURN HTTP HEADERS
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  // RETURN THE CONTENTS OF THE CALL
