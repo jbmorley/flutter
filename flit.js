@@ -16,28 +16,55 @@ var tweet_status = '';
 var queue_friends = new Array();
 var queue_directs = new Array();
 
-var page_friends = 1;
-var page_directs = 1;
+var page_friends = 0;
+var page_directs = 0;
 
 function refresh() {
-	setup_events();
-	friends_timeline(page_friends);
-	direct_messages(page_directs);
+	setup_events();	
+	fetch_tweets_if_necessary();
 }
 
 
-function load_more() {
+function fetch_tweets_if_necessary() {
 
-	// Make sure the buckets aren't empty
+	// Make sure all the tweet buckets have enough
+	// contents.
+	
+	// When each of the updates is completed, it will
+	// call display_tweets.  This will successfully run
+	// when there are no outstanding updates and will
+	// interlace all the current tweets to the UI.
+
 	if (queue_friends.length < 1) {
 		page_friends++;
 		friends_timeline(page_friends);
 	}
 	
 	if (queue_directs.length < 1) {
-	
+		page_directs++;
+		direct_messages(page_directs);
 	}
 	
+}
+
+function display_tweets() {
+
+	if (active_updates < 1) {
+	
+		// Attempt to re-thread the tweets.
+		var count_friends = 0;
+		var count_directs = 0;
+		
+		while (count_friends < queue_friends.length) {
+		
+			add(queue_friends[count_friends]);
+			count_friends++;
+		
+		}
+
+	}
+	
+
 }
 
 function should_load_more() {
@@ -99,9 +126,10 @@ function friends_timeline(page) {
 		page,
 		function(result) {
 			for (var i=0; i<result.length; i++) {
-				add(result[i]);
+				queue_friends.push(result[i]);
 			}
-			should_load_more();
+			display_tweets();
+			// TODO Do this with a periodic.
 			setTimeout('friends_timeline(1);', 300000);
 		}
 	);
@@ -113,8 +141,11 @@ function direct_messages(page) {
 		page,
 		function(result) {
 			for (var i=0; i<result.length; i++) {
-				add(result[i]);
+				queue_directs.push(result[i]);
 			}
+			display_tweets();
+			// TODO Do this with a periodic.
+			setTimeout('direct_messages(1);', 300000);
 		}
 	);
 }
@@ -133,14 +164,14 @@ function fetch(url, page, fn) {
 		parameters: { 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
 			var result = interpret(transport.responseText);
-			fn(result);
 			
 			active_updates--;
 			if (active_updates < 1) {
 				updating = false;
 				$('ld').style.display = 'none';
 			}
-			
+
+			fn(result);			
 		},
 		onFailure: function() {
 			alert('Unable to query Twitter.  Please try again later.');
