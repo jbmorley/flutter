@@ -17,7 +17,6 @@ function refresh() {
 	setup_events();
 	fetch('/twitter/friends_timeline.php', page);
 	fetch('/twitter/direct_messages.php', 1);
-	// fetch_direct('/twitter/direct_messages.php');
 }
 
 function should_load_more() {
@@ -38,12 +37,14 @@ function setup_events() {
 	Event.observe(window, 'scroll', function() { 
   		
   		if (should_load_more() && !updating) {
-  		
   			page++;
   			fetch('/twitter/friends_timeline.php', page);
-			
   		}
  
+	});
+	
+	$('new_tweet').observe('keyup', function(event) { 
+		tweet_color();
 	});
 
 	$('new_tweet').observe('keydown', function(event) {
@@ -67,44 +68,10 @@ function setup_events() {
 				$('remaining').removeClassName('error');
 			}
 		}
-		tweet_color();
 	});
 	
 }
 
-function fetch_direct(url) {
-
-	new Ajax.Request(url,
-	  {
-		method:'post',
-		parameters: { 'user': user, 'pass': pass },
-		onSuccess: function(transport) {
-			
-			var result = interpret(transport.responseText);
-			for (var i=0 ; i<result.length; i++) {
-				add(result[i]);
-				alert(result[i].text);
-			}
-		  
-		 	/*
-		  	should_load_more();
-			setTimeout('fetch(' + '"' + url + '");', 300000);
-			updating = false;
-			$('ld').style.display = 'none';
-			*/
-		  
-		},
-		onFailure: function() {
-			alert('Unable to query Twitter.  Please try again later.');
-			
-			updating = false;
-			$('ld').style.display = 'none';
-
-		}
-	  });
-
-
-}
 
 function fetch(url, page) {
 	
@@ -123,7 +90,6 @@ function fetch(url, page) {
 			}
 		  
 		  	should_load_more();
-		  	
 			setTimeout('fetch(' + '"' + url + '");', 300000);
 
 			updating = false;
@@ -291,7 +257,6 @@ function add(tweet) {
 		cell_text.insert(name);
 		
 		// Replace links
-		// TODO Refactor me into a nice little utility function
 		var text = tweet.text;
 		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
 		text = text.replace(url, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
@@ -310,21 +275,25 @@ function add(tweet) {
 				if (!link_clicked) {
 			
 					var new_tweet = $('new_tweet');
+					var value = new_tweet.value;
+					if (value.match(new RegExp('^((\s*)|(\@[^\s]+ )|(d [^\s]+ ))$'))) {
 		
-					var reply  = "@" + screen_name + " ";
-					var direct = "d " + screen_name + " ";
+						var reply  = "@" + screen_name + " ";
+						var direct = "d " + screen_name + " ";
+						
+						if (new_tweet.value != reply) {
+							new_tweet.value = reply;
+							new_tweet.activate();
+							doSetCaretPosition(new_tweet, reply.length);
+						} else if (new_tweet.value == reply) {
+							new_tweet.value = direct;
+							new_tweet.activate();
+							doSetCaretPosition(new_tweet, direct.length);
+						}
+						
+						tweet_color();
 					
-					if (new_tweet.value != reply) {
-						new_tweet.value = reply;
-						new_tweet.activate();
-						doSetCaretPosition(new_tweet, reply.length);
-					} else if (new_tweet.value == reply) {
-						new_tweet.value = direct;
-						new_tweet.activate();
-						doSetCaretPosition(new_tweet, direct.length);
 					}
-					
-					tweet_color();
 					
 				} else {
 				
@@ -342,7 +311,6 @@ function add(tweet) {
 		table_layout.insert(row_layout);
 	
 		var li = Builder.node('li');
-		// li.style.display = 'none';
 		li.insert(table_layout);
 		
 		// Reply
