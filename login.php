@@ -4,7 +4,12 @@
 		<style>
 		
 			<?php include("css/flutter.css"); ?>
-			
+
+			body
+				{
+				text-align: center;
+				}			
+
 			#login
 				{
 				background-color: #e8eefa;

@@ -11,7 +11,7 @@
 			<?php include("js/effects.js"); ?>
 			<?php include("js/scriptaculous.js"); ?>
 			<?php include("js/date.js"); ?>
-			<?php include("js/flit.js"); ?>
+			<?php include("js/flutter.js"); ?>
 			
 			var user = '<?php echo $_POST['user']; ?>';
 			var pass = '<?php echo $_POST['pass']; ?>';
