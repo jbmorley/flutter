@@ -6,12 +6,12 @@
 		<script type="text/javascript">
 			
 			//<!--
-			<?php include("prototype.js"); ?>
-			<?php include("builder.js"); ?>
-			<?php include("effects.js"); ?>
-			<?php include("scriptaculous.js"); ?>
-			<?php include("date.js"); ?>
-			<?php include("flit.js"); ?>
+			<?php include("js/prototype.js"); ?>
+			<?php include("js/builder.js"); ?>
+			<?php include("js/effects.js"); ?>
+			<?php include("js/scriptaculous.js"); ?>
+			<?php include("js/date.js"); ?>
+			<?php include("js/flit.js"); ?>
 			
 			var user = '<?php echo $_POST['user']; ?>';
 			var pass = '<?php echo $_POST['pass']; ?>';
