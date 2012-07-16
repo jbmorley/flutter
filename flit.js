@@ -234,8 +234,9 @@ function add(tweet) {
 		var profile_image_url = '';
 		var screen_name = '';
 		var user_name = '';
+		var direct = false;
 
-		// Handle direct messages!		
+		// Handle direct messages!
 		if (tweet.user == undefined) {
 			profile_image_url = "http://s3.amazonaws.com/twitter_production/profile_images/20443772/user4_normal.jpg";
 			profile_image_url = tweet.sender.profile_image_url;
@@ -293,8 +294,11 @@ function add(tweet) {
 		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
 		text = text.replace(url, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
 		cell_text.insert('<p>' + text + '</p>');
-				
-		var at = Builder.node('p', tweet.created_at);
+		
+		var created_at = tweet.created_at;
+		created_at = created_at.substring(0, created_at.length-11);
+		var at = Builder.node('p', created_at);
+		
 		at.addClassName('at');
 		cell_text.insert(at);
 		
