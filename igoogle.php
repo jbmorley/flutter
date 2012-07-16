@@ -34,7 +34,7 @@
 				var user = prefs.getString("user");
 				var pass = prefs.getString("pass");
 				
-				var url = "http://www.jbmorley.co.uk/flit/flit.php?user=" + user + "&pass=" + pass;
+				var url = "http://flutter.jbmorley.co.uk/flit.php?user=" + user + "&pass=" + pass;
 				
 				document.getElementById('flutter').src = url;
 			}

@@ -9,7 +9,8 @@
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		// Get the parameters
-		isset($_POST['status']) ? $status = $_POST['status'] : '';
+		$status = isset($_POST['status']) ? $_POST['status'] : '';
+		$status = str_replace('\\\'', '\'', $status);
 
 		// Construct the CURL call	
 		$ch = curl_init(POSTURL);
