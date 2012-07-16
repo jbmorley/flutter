@@ -33,10 +33,10 @@
 				<div id="remaining">140</div>
 				<textarea id="new_tweet"></textarea>
 			</div>
+			<div id="ld">Loading...</div>
 		</div>
 		<div id='all'>
 			<ul id="feed"></ul>
-			<div id="ld">Loading...</div>
 		</div>
 		
 	</body>

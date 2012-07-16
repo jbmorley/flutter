@@ -165,6 +165,14 @@ function setup_events() {
   			page_friends++;
   			friends_timeline(page_friends);
   		}
+  		
+  		// IE Specific Behaviour
+  		if (navigator.userAgent.indexOf('MSIE') != -1) {
+	  		var scroll = document.viewport.getScrollOffsets().top;
+	  		$('write_super').style.top = scroll + 'px';
+  		}
+
+
  
 	});
 	
