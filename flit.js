@@ -25,6 +25,14 @@ var page_sent    = 0;
 function refresh() {
 	setup_events();	
 	fetch_tweets_if_necessary();
+	setTimeout('update_tweets();', 300000);
+}
+
+
+function update_tweets() {
+	friends_timeline(1);
+	direct_messages(1);
+	sent(1);
 }
 
 
@@ -196,12 +204,6 @@ function friends_timeline(page) {
 				queue_friends.push(result[i]);
 			}
 			display_tweets();
-
-			// Only kick off the periodic updates the first time around
-			if (page == 1) {
-				setTimeout('friends_timeline(1);', 300000);
-			}
-			
 		}
 	);
 }
@@ -215,11 +217,6 @@ function direct_messages(page) {
 				queue_directs.push(result[i]);
 			}
 			display_tweets();
-
-			// Only kick off the periodic updates the first time around
-			if (page == 1) {
-				setTimeout('direct_messages(1);', 300000);
-			}
 		}
 	);
 }
@@ -234,11 +231,6 @@ function sent(page) {
 				queue_sent.push(result[i]);
 			}
 			display_tweets();
-
-			// Only kick off the periodic updates the first time around
-			if (page == 1) {
-				setTimeout('sent(1);', 300000);
-			}
 		}
 	);
 }
@@ -349,8 +341,6 @@ function update(message) {
 		method: 'post',
 		parameters: { status: message, 'user': user, 'pass': pass },
 		onSuccess: function(transport) {
-		
-			add(interpret(transport.responseText));
 			
 			$('new_tweet').value = '';
 			$('new_tweet').removeClassName('updating');
@@ -358,6 +348,8 @@ function update(message) {
 			$('remaining').removeClassName('error');
 			$('remaining').removeClassName('warning');
 			update_color();
+			
+			setTimeout('update_tweets();', 5000);
 			
 		},
 		onFailure: function() {
