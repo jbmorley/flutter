@@ -349,7 +349,8 @@ function update(message) {
 			$('remaining').removeClassName('warning');
 			update_color();
 			
-			setTimeout('update_tweets();', 5000);
+			add(interpret(transport.responseText));
+			setTimeout('update_tweets();', 15000);
 			
 		},
 		onFailure: function() {
