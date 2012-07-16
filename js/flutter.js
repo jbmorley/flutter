@@ -460,12 +460,8 @@ function add(tweet) {
 		
 		// Replace links
 		var text = tweet.text;
-		var url  = new RegExp('(http://\\S+[^\\.^\\s]+)');
-		text = text.replace(url, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
-		
-		// Replace @username
-		var at_username = new RegExp('(@(\\S+))');
-		text = text.replace(at_username, '<span onclick="openInNewWindow(\'http://www.twitter.com/$2\');" class="link">$1</span>');
+		text = text.replace(/(http:\/\/\S+[^\(^\)^\.^\s]+)/g, '<span onclick="openInNewWindow(\'$1\');" class="link">$1</span>');
+		text = text.replace(/(@([^\(^\)^\.^\s]+))/g, '<span onclick="openInNewWindow(\'http://www.twitter.com/$2\');" class="link">$1</span>');
 
 		// Actually set the text.
 		cell_text.insert('<p>' + text + '</p>');		

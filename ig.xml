@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-	<ModulePrefs title="Flutter" height="350" />
-	<UserPref name="user" display_name="Username" required="true" />
-	<UserPref name="pass" display_name="Password" required="true" />
+	<ModulePrefs
+		title="Flutter"
+		author="Jason Barrie Morley"
+		author_email="jason.morley@gmail.com"
+		description="A light-weight Twitter client supporting threading of direct messages and @replies."
+		screenshot="http://flutter.jbmorley.co.uk/images/screenshot.png"
+		thumbnail="http://flutter.jbmorley.co.uk/images/thumbnail.png"
+		height="350"
+		/>
+	<UserPref name="user" display_name="Username" required="true" datatype="string" />
+	<UserPref name="pass" display_name="Password" required="true" datatype="string" />
 	<Content type="html"><![CDATA[
 	
 		<style>

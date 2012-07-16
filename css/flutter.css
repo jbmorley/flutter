@@ -27,8 +27,13 @@ a img
 	background: white none repeat scroll 0 0;
 	border: 0 none;
 	margin: -1px auto auto;
-	position: fixed;
+	position: absolute;
 	width: 100%;
+	}
+	
+body > #write_super
+	{
+	position: fixed;
 	}
 	
 #write
@@ -152,11 +157,16 @@ a img
 	padding: 2px;
 	color: #fff;
 	background-color: #c44;
-	position: absolute;
+	position: fixed;
 	top: 65px;
 	right: 0;
-	position: fixed;
+	position: absolute;
 	display: none;
+	}
+	
+div > #ld
+	{
+	position: fixed;
 	}
 	
 .link
