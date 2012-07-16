@@ -11,11 +11,11 @@
 		#flutter
 			{
 			border: 1px solid grey;
-			overflow: hidden;
+			overflow: scroll;
 			margin: auto;
 			width: 400px;
 			height: 500px;
-			padding: 5px;
+			padding: 0;
 			}
 	</style>
 		
