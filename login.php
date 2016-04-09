@@ -8,13 +8,21 @@
 			body
 				{
 				text-align: center;
+				}
+				
+			#user_form
+				{
+				border: 1px solid #3d5fa0;
+				margin: 50px auto;
+				width: 290px;
+				padding: 5px;
 				}			
 
 			#login
 				{
-				background-color: #e8eefa;
+				/* background-color: #3d5fa0; */
+				background-color: #aadeff;
 				padding: 20px;
-				margin: 50px auto;
 				width: 250px;
 				}
 				
@@ -36,6 +44,9 @@
 				</table>
 			</div>
 		</form>
+		
+		<img src="images/icon_128_yellow.png" alt="Flutter Icon" title="Flutter Icon" />
+		
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

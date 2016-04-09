@@ -53,6 +53,7 @@ body > #write_super
 	padding: 0;
 	margin: 0;
 	padding-bottom: 200px;
+	background: url(images/icon_128_yellow.png) no-repeat center;
 	}
 	
 #feed table
@@ -70,6 +71,7 @@ body > #write_super
 	{
 	padding: 5px;
 	border-bottom: 1px solid #ddd;
+	background-color: #fff;
 	}
 	
 .profile
@@ -114,12 +116,12 @@ body > #write_super
 	padding: 5px 0 0 0;
 	}
 	
-.reply
+#feed .reply
 	{
 	background-color: #ffc;
 	}
 	
-.direct
+#feed .direct
 	{
 	background-color: #eee;
 	}
